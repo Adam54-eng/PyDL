@@ -6,7 +6,7 @@
 ![MIT License](https://img.shields.io/badge/License-MIT-green)
 ![Pure Python](https://img.shields.io/badge/Dependencies-0-orange)
 
-# 🧠 Understanding Deep Learning
+# Understanding Deep Learning
 
 Before using PyDL, it's important to understand how a neural network learns.
 
