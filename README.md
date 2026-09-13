@@ -2,9 +2,6 @@
 Lightweight neural network library written in pure Python.
 # PyDL
 
-**PyDL** is a lightweight neural network library built from scratch in pure Python.
-Its goal is to provide a simple, readable, and fully customizable implementation of feed-forward neural networks and backpropagation.
-
 ## Features
 
 * Dense neural networks
