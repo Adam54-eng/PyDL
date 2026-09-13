@@ -6,6 +6,16 @@
 ![MIT License](https://img.shields.io/badge/License-MIT-green)
 ![Pure Python](https://img.shields.io/badge/Dependencies-0-orange)
 
+## Why PyDL?
+
+PyDL is an educational deep learning library built from scratch using only Python's standard library. It exposes every part of a neural network—from weight initialization to backpropagation—making it ideal for learning and experimentation.
+
+```python
+from pydl import *
+
+nn = Neuronal_network([1, 10, 10, 1], Initialization.he)
+```
+
 ## Overview
 
 This project is a fully functional implementation of a **feedforward neural network** built entirely with Python's standard library. It is designed for educational purposes, experimentation, and understanding how neural networks work internally without relying on machine learning frameworks.
@@ -487,6 +497,12 @@ Output:
 * Easily extensible with custom activation functions and initialization strategies.
 
 ---
+
+## Contributing
+
+Contributions, ideas, and pull requests are welcome!
+
+If you enjoy PyDL, consider giving the repository a ⭐.
 
 # License
 
