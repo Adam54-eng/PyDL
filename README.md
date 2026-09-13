@@ -6,6 +6,101 @@
 ![MIT License](https://img.shields.io/badge/License-MIT-green)
 ![Pure Python](https://img.shields.io/badge/Dependencies-0-orange)
 
+# 🧠 Understanding Deep Learning
+
+Before using PyDL, it's important to understand how a neural network learns.
+
+## The Artificial Neuron
+
+A neuron receives several inputs, multiplies each one by a **weight**, adds a **bias**, and produces an output.
+
+<math block value="z=(x_1w_1+x_2w_2+\\cdots+x_nw_n)+b"/>
+
+Where:
+
+- **x** → input values
+- **w** → learnable weights
+- **b** → bias
+- **z** → raw output of the neuron
+
+The weights determine the importance of each input, while the bias shifts the result.
+
+## Activation Function
+
+The value **z** is passed through an activation function to create the final output.
+
+<math block value="a=f(z)"/>
+
+Without activation functions, a neural network would only be able to learn linear relationships.
+
+Common examples:
+
+| Activation | Output |
+|------------|--------|
+| ReLU | `max(0, x)` |
+| Sigmoid | Values between 0 and 1 |
+| Tanh | Values between -1 and 1 |
+
+## Why Do We Need Derivatives?
+
+A neural network learns by reducing its prediction error.
+
+After making a prediction:
+
+1. Compute the error.
+2. Measure how much each weight contributed.
+3. Update every weight slightly.
+
+This requires the **derivative** of the activation function.
+
+The derivative tells us **how sensitive the output is to a small change in the input**.
+
+For example, the sigmoid function is:
+
+<math block value="\\sigma(x)=\\frac{1}{1+e^{-x}}"/>
+
+Its derivative is:
+
+<math block value="\\sigma'(x)=\\sigma(x)(1-\\sigma(x))"/>
+
+ReLU is even simpler:
+
+<math block value="\\text{ReLU}(x)=\\max(0,x)"/>
+
+Derivative:
+
+<math block value="\\text{ReLU}'(x)=\\begin{cases}1&x>0\\\\0&x\\le0\\end{cases}"/>
+
+PyDL implements both the **forward function** and its **derivative** for every activation.
+
+## Forward & Backward Propagation
+
+During training, the network repeats the same cycle thousands of times:
+
+```text
+Input
+  │
+  ▼
+Weighted Sum (Weights + Bias)
+  │
+  ▼
+Activation Function
+  │
+  ▼
+Prediction
+  │
+  ▼
+Error Calculation
+  │
+  ▼
+Backpropagation
+  │
+  ▼
+Update Weights
+```
+
+This iterative optimization process is what allows the network to gradually learn complex patterns from data.
+
 ## Why PyDL?
 
 PyDL is an educational deep learning library built from scratch using only Python's standard library. It exposes every part of a neural network—from weight initialization to backpropagation—making it ideal for learning and experimentation.
