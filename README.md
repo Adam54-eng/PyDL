@@ -1,6 +1,10 @@
-# 🧠 Neuronal Network Library
+# 🧠 PyDL
 
-> A lightweight neural network library written in pure Python — no NumPy, no TensorFlow, no external dependencies.
+> A lightweight Deep Learning library written entirely in pure Python.
+
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
+![MIT License](https://img.shields.io/badge/License-MIT-green)
+![Pure Python](https://img.shields.io/badge/Dependencies-0-orange)
 
 ## Overview
 
