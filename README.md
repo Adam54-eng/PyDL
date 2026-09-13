@@ -1,185 +1,241 @@
-# PyDL
+# 🧠 Neuronal Network Library
 
-**PyDL** is a lightweight deep learning library written entirely in pure Python.
+> A lightweight neural network library written in pure Python — no NumPy, no TensorFlow, no external dependencies.
 
-Its purpose is to help understand how neural networks work by implementing every important component from scratch: neurons, forward propagation, backpropagation, weight initialization, activation functions and model serialization.
+## Overview
 
----
+This project is a fully functional implementation of a **feedforward neural network** built entirely with Python's standard library. It is designed for educational purposes, experimentation, and understanding how neural networks work internally without relying on machine learning frameworks.
 
-# Features
+### Features
 
-* Fully connected neural networks
+* Fully connected neural network architecture
+* Forward propagation
 * Backpropagation training
-* Multiple activation functions
-* Xavier, He and Uniform initialization
-* JSON save & load
+* 12 built-in activation functions
+* Xavier and He weight initialization
+* Custom weight initialization
+* Optional Softmax output layer
+* Model evaluation and accuracy metrics
 * Learning rate finder
-* Pure Python (no NumPy required)
+* JSON model saving and loading
+* Deep model cloning
+* Zero external dependencies
 
 ---
 
 # Installation
 
-```bash
-git clone https://github.com/Adams54-eng/PyDL.git
-cd PyDL
+Simply place the library in your project.
+
+```text
+project/
+│
+├── neuronal_network.py
+└── main.py
 ```
 
-No external dependencies are required.
+Requirements:
+
+* Python 3.10+
+
+No installation or package manager is required.
 
 ---
 
 # Quick Start
 
 ```python
-import pydl
+from neuronal_network import *
 
-nn = pydl.Neuronal_network(
-    [2, 8, 8, 1],
-    pydl.Initialization.he
+# Create a neural network
+network = Neuronal_network(
+    neuronal_structure=[2, 4, 1],
+    init=Initialization.xavier
 )
 
-nn.set_activation(
-    pydl.Activation(
-        pydl.ReLU.forward,
-        pydl.ReLU.derivative
-    )
+# Set activation function
+network.set_activation(
+    Activation(ReLU.forward, ReLU.derivative)
 )
 
-nn.neurones[-1][0].activation = pydl.Activation(
-    pydl.Tanh.forward,
-    pydl.Tanh.derivative
-)
+# XOR dataset
+inputs = [
+    [0,0],
+    [0,1],
+    [1,0],
+    [1,1]
+]
 
-X = [[0,0],[0,1],[1,0],[1,1]]
-Y = [[0],[1],[1],[0]]
+targets = [
+    [0],
+    [1],
+    [1],
+    [0]
+]
 
+# Train the model
 for _ in range(5000):
-    nn.train(X, Y, 0.01)
+    network.train(inputs, targets, learning_rate=0.1)
 
-print(nn.predict([1,0]))
+# Predict
+print(network.predict([0,1]))
 ```
 
 ---
 
-# Creating a Network
+# Network Architecture
 
-A network is defined by its architecture.
+The architecture is defined by a list of integers.
 
 ```python
-nn = pydl.Neuronal_network(
-    [4, 16, 8, 2],
-    pydl.Initialization.xavier
-)
+[3, 8, 8, 2]
 ```
 
-The list represents:
+Represents:
 
-* **4** input values
-* **16** neurons
-* **8** neurons
-* **2** output neurons
+| Layer  | Neurons |
+| ------ | ------- |
+| Input  | 3       |
+| Hidden | 8       |
+| Hidden | 8       |
+| Output | 2       |
+
+Example:
+
+```python
+network = Neuronal_network(
+    [4,16,3],
+    Initialization.he
+)
+```
 
 ---
 
 # Activation Functions
 
-Apply one activation to every neuron.
+The library includes multiple activation functions.
+
+| Function   | Description                   |
+| ---------- | ----------------------------- |
+| Linear     | Identity activation           |
+| Sigmoid    | Binary classification         |
+| Tanh       | Zero-centered activation      |
+| ReLU       | Most common hidden activation |
+| LeakyReLU  | Prevents dead neurons         |
+| Softplus   | Smooth ReLU                   |
+| ELU        | Exponential Linear Unit       |
+| GELU       | Transformer activation        |
+| Swish      | Google's smooth activation    |
+| Mish       | Self-regularized activation   |
+| SELU       | Self-normalizing networks     |
+| BinaryStep | Threshold activation          |
+
+### Example
 
 ```python
-nn.set_activation(
-    pydl.Activation(
-        pydl.ReLU.forward,
-        pydl.ReLU.derivative
-    )
+network.set_activation(
+    Activation(Tanh.forward, Tanh.derivative)
 )
 ```
 
-The output layer can use another activation.
+For activations requiring parameters:
 
 ```python
-nn.neurones[-1][0].activation = pydl.Activation(
-    pydl.Linear.forward,
-    pydl.Linear.derivative
-)
-```
-
-Available activations:
-
-| Function  | Output                 |
-| --------- | ---------------------- |
-| Linear    | (-∞, +∞)               |
-| ReLU      | [0, +∞)                |
-| LeakyReLU | (-∞, +∞)               |
-| Sigmoid   | (0, 1)                 |
-| Tanh      | (-1, 1)                |
-| ELU       | Smooth negative values |
-| GELU      | Smooth ReLU            |
-| Softplus  | Positive smooth output |
-
----
-
-# API Reference
-
-## Neuronal_network
-
-### `__init__(neuronal_structure, init)`
-
-Creates a neural network.
-
-```python
-nn = pydl.Neuronal_network(
-    [3, 12, 1],
-    pydl.Initialization.he
-)
-```
-
-| Parameter            | Description                  |
-| -------------------- | ---------------------------- |
-| `neuronal_structure` | List describing each layer   |
-| `init`               | Weight initialization method |
-
----
-
-### `set_activation(activation)`
-
-Applies the same activation to every neuron.
-
-```python
-nn.set_activation(
-    pydl.Activation(
-        pydl.ReLU.forward,
-        pydl.ReLU.derivative
+network.set_activation(
+    Activation(
+        LeakyReLU.forward,
+        LeakyReLU.derivative,
+        alpha=0.01
     )
 )
 ```
 
 ---
 
-## Prediction
+# Weight Initialization
 
-### `predict(input)`
+Three initialization strategies are available.
 
-Returns the network prediction.
+## Xavier Initialization
+
+Recommended for Sigmoid and Tanh.
 
 ```python
-result = nn.predict([0.5, 0.1])
+network = Neuronal_network(
+    [3,10,1],
+    Initialization.xavier
+)
 ```
 
-**Returns**
+## He Initialization
+
+Recommended for ReLU-based networks.
 
 ```python
-[0.842]
+network = Neuronal_network(
+    [3,10,1],
+    Initialization.he
+)
+```
+
+## Custom Uniform Initialization
+
+```python
+initializer = Initialization.uniform(-1,1)
+
+network = Neuronal_network(
+    [3,6,2],
+    initializer
+)
 ```
 
 ---
 
-### `forward_pass(input)`
+# Training
 
-Returns the output of every layer.
+Train using gradient descent and backpropagation.
 
 ```python
-layers = nn.forward_pass([1,0])
+network.train(
+    train_list=inputs,
+    result_list=targets,
+    learning_rate=0.05
+)
+```
+
+For manual iteration:
+
+```python
+for epoch in range(1000):
+    network.train(inputs, targets, 0.05)
+```
+
+---
+
+# Prediction
+
+```python
+result = network.predict([1,0])
+
+print(result)
+```
+
+Output:
+
+```python
+[0.973]
+```
+
+---
+
+# Forward Pass Inspection
+
+Retrieve every layer's output.
+
+```python
+layers = network.forward_pass([1,0])
+
+print(layers)
 ```
 
 Example output:
@@ -187,231 +243,247 @@ Example output:
 ```python
 [
     [1,0],
-    [...],
-    [...],
-    [0.91]
+    [0.34, 0.82, 0.11],
+    [0.97]
 ]
 ```
 
-Useful for debugging or visualizing hidden layers.
+Useful for debugging and visualization.
 
 ---
 
-## Training
+# Softmax
 
-### `train(train_list, result_list, learning_rate)`
-
-Trains the network for one complete epoch.
+Enable Softmax on the output layer.
 
 ```python
-nn.train(X, Y, 0.001)
+network.set_softmax(True)
 ```
 
-| Parameter       | Description           |
-| --------------- | --------------------- |
-| `train_list`    | Input samples         |
-| `result_list`   | Expected outputs      |
-| `learning_rate` | Gradient descent step |
+Prediction:
+
+```python
+print(network.predict(image))
+```
+
+Example:
+
+```python
+[0.02, 0.91, 0.07]
+```
+
+Probabilities always sum to **1.0**.
 
 ---
 
-### `back_propagation(input, expected, learning_rate)`
+# Model Evaluation
 
-Performs a single learning step.
+## Average Error
 
 ```python
-nn.back_propagation(
-    [1,0],
-    [1],
-    0.001
+error = network.evaluate(inputs, targets)
+
+print(error)
+```
+
+Returns the mean absolute prediction error.
+
+## Accuracy
+
+```python
+dataset = list(zip(inputs, targets))
+
+accuracy = network.accuracy(
+    dataset,
+    tolerance=0.1
 )
-```
 
-This method automatically performs:
-
-1. Forward propagation
-2. Error computation
-3. Gradient propagation
-4. Weight update
-
----
-
-## Evaluation
-
-### `evaluate(inputs, expected)`
-
-Computes the average absolute error.
-
-```python
-error = nn.evaluate(X, Y)
-```
-
-Example:
-
-```python
-0.0134
+print(f"{accuracy}%")
 ```
 
 ---
 
-### `accuracy(dataset, tolerance)`
+# Learning Rate Finder
 
-Computes prediction accuracy within a tolerance.
-
-```python
-acc = nn.accuracy(dataset, 0.05)
-```
-
-Example:
+Automatically estimate a good learning rate.
 
 ```python
-98.7
+best_lr = network.learning_rate_finder(
+    min_max=(0.0001, 1),
+    training_list=list(zip(inputs, targets)),
+    list_question=list(zip(inputs, targets)),
+    number_train=8,
+    log=True
+)
+
+print(best_lr)
 ```
+
+The algorithm repeatedly narrows the search interval using cloned models.
 
 ---
 
-## Model Management
+# Saving a Model
 
-### `save_json(path)`
-
-Saves every weight and bias.
+Save weights and biases as JSON.
 
 ```python
-nn.save_json("model.json")
+network.save_json("model.json")
 ```
 
-The file contains:
+Example file:
 
 ```json
 {
-    "weights": [...],
-    "bias": [...]
+    "weights": [
+        [[0.2, -0.1], [0.7, 0.4]]
+    ],
+    "bias": [
+        [0.1, -0.3]
+    ]
 }
 ```
 
 ---
 
-### `load_json(path)`
-
-Loads a previously trained model.
+# Loading a Model
 
 ```python
-nn.load_json("model.json")
+network.load_json("model.json")
 ```
+
+The architecture must match the saved model.
 
 ---
 
-### `clone()`
+# Clone a Network
 
-Creates a deep copy of the network.
+Create an independent deep copy.
 
 ```python
-copy = nn.clone()
+copy = network.clone()
+
+copy.train(inputs, targets, 0.1)
 ```
 
-Useful for testing hyperparameters without modifying the original model.
+The original model remains unchanged.
 
 ---
 
-### `reset()`
+# Reset Parameters
 
-Reinitializes every weight using the original initialization method.
+Reinitialize every neuron.
 
 ```python
-nn.reset()
+network.reset(Initialization.he)
 ```
+
+This resets:
+
+* Weights
+* Biases
+* Internal training state
 
 ---
 
-## Hyperparameter Tuning
+# API Reference
 
-### `learning_rate_finder(min_max, training_list, validation_list, number_train, log=False)`
+## Neuronal_network
 
-Automatically searches for a good learning rate.
-
-```python
-lr = nn.learning_rate_finder(
-    (1e-5, 0.1),
-    train_data,
-    valid_data,
-    6
-)
-```
-
-Returns the best learning rate found.
-
----
-
-# Weight Initialization
-
-## He Initialization
-
-Recommended with ReLU.
-
-```python
-pydl.Initialization.he
-```
-
-## Xavier Initialization
-
-Balanced initialization for many activation functions.
-
-```python
-pydl.Initialization.xavier
-```
-
-## Uniform Initialization
-
-Custom interval.
-
-```python
-pydl.Initialization.uniform(-1, 1)
-```
-
----
-
-# Examples
-
-Approximate a cosine function:
-
-```python
-import math
-
-for angle in range(-360, 361):
-    x = [angle / 360]
-    y = [math.cos(math.radians(angle))]
-    nn.back_propagation(x, y, 0.001)
-```
-
-Predict:
-
-```python
-print(nn.predict([45/360]))
-```
+| Method               | Description              |
+| -------------------- | ------------------------ |
+| `predict()`          | Compute output           |
+| `forward_pass()`     | Return every layer       |
+| `train()`            | Train on a dataset       |
+| `back_propagation()` | Single optimization step |
+| `evaluate()`         | Mean absolute error      |
+| `accuracy()`         | Percentage accuracy      |
+| `clone()`            | Deep copy                |
+| `reset()`            | Reinitialize parameters  |
+| `save_json()`        | Save model               |
+| `load_json()`        | Load model               |
+| `set_activation()`   | Change activation        |
+| `set_softmax()`      | Enable Softmax           |
 
 ---
 
 # Project Structure
 
 ```text
-PyDL/
+neuronal_network.py
+
+├── Activation Functions
+│   ├── Linear
+│   ├── Sigmoid
+│   ├── Tanh
+│   ├── ReLU
+│   ├── LeakyReLU
+│   ├── GELU
+│   ├── Swish
+│   ├── Mish
+│   ├── ELU
+│   ├── SELU
+│   ├── Softplus
+│   └── BinaryStep
 │
-├── pydl.py
-├── README.md
-├── LICENSE
-├── examples/
-│   ├── xor.py
-│   ├── cosine.py
-│   ├── tangent.py
-│   └── visualizer.py
-└── models/
-    └── model.json
+├── Activation Wrapper
+│
+├── Initialization
+│   ├── Xavier
+│   ├── He
+│   └── Uniform
+│
+├── Neuron
+│
+├── Evaluation
+│
+├── Model Manager
+│
+├── Hyperparameter Tuner
+│
+├── Training
+│
+└── Neuronal_network
 ```
 
 ---
 
-# Philosophy
+# Example: Multi-Class Classification
 
-PyDL is **not designed to compete with TensorFlow or PyTorch**. It is an educational library whose objective is to make neural networks understandable, hackable and easy to extend.
+```python
+network = Neuronal_network(
+    [4,16,3],
+    Initialization.he
+)
 
-Every algorithm is intentionally kept readable so anyone can modify the source code and experiment with artificial intelligence from scratch.
+network.set_activation(
+    Activation(ReLU.forward, ReLU.derivative)
+)
+
+network.set_softmax(True)
+
+prediction = network.predict([5.1, 3.5, 1.4, 0.2])
+
+print(prediction)
+```
+
+Output:
+
+```python
+[0.97, 0.02, 0.01]
+```
+
+---
+
+# Notes
+
+* Written entirely in pure Python.
+* Uses standard gradient descent.
+* Designed for learning rather than production-scale performance.
+* Easily extensible with custom activation functions and initialization strategies.
+
+---
+
+# License
+
+MIT License — free to use, modify, and distribute.
