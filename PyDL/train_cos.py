@@ -55,3 +55,20 @@ for _ in range(100000):
 nn.save_json("data.json")
 
 print("Training complete! Model saved to data.json")
+
+# ==========================================================
+# Model Evaluation
+# ==========================================================
+
+# Generate a test dataset
+test_inputs = []
+test_targets = []
+
+for angle in range(-360, 361):
+    test_inputs.append([angle / 360])
+    test_targets.append([math.cos(math.radians(angle))])
+
+# Compute the mean absolute error
+error = nn.evaluate(test_inputs, test_targets)
+
+print(f"Mean Absolute Error: {error:.6f}")
