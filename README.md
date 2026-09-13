@@ -1,17 +1,8 @@
 # PyDL
 
 **PyDL** is a lightweight deep learning library written entirely in pure Python.
-It was created to understand **how neural networks work internally**, without relying on NumPy, TensorFlow or PyTorch.
 
-Instead of hiding the mathematics, PyDL exposes every step: neurons, weights, activations, forward propagation and backpropagation.
-
----
-
-# Why PyDL?
-
-Most AI libraries are optimized for performance. PyDL is optimized for **learning**.
-
-With only a few lines of code, you can create, train, save and reuse fully connected neural networks while keeping the implementation easy to read and modify.
+Its purpose is to help understand how neural networks work by implementing every important component from scratch: neurons, forward propagation, backpropagation, weight initialization, activation functions and model serialization.
 
 ---
 
@@ -21,64 +12,24 @@ With only a few lines of code, you can create, train, save and reuse fully conne
 * Backpropagation training
 * Multiple activation functions
 * Xavier, He and Uniform initialization
-* JSON model saving and loading
-* Learning rate utilities
-* Pure Python implementation
+* JSON save & load
+* Learning rate finder
+* Pure Python (no NumPy required)
 
 ---
 
-# How the library works
+# Installation
 
-A neural network in PyDL is composed of **layers of neurons**.
+```bash
+git clone https://github.com/Adams54-eng/PyDL.git
+cd PyDL
+```
 
-Each neuron contains:
-
-* A list of weights
-* One bias
-* One activation function
-
-The data flows through the network during **forward propagation**, and the weights are updated during **backpropagation**.
-
-<svg viewBox="0 0 320 140">
-  <rect width=320 height=140 rx=12 fill="#F8FAFC" stroke="#CBD5E1"/>
-  <g fill="#2563EB">
-    <circle cx=34 cy=50 r=8/>
-    <circle cx=34 cy=90 r=8/>
-  </g>
-  <g fill="#64748B">
-    <circle cx=112 cy=34 r=7/>
-    <circle cx=112 cy=70 r=7/>
-    <circle cx=112 cy=106 r=7/>
-  </g>
-  <g fill="#64748B">
-    <circle cx=192 cy=34 r=7/>
-    <circle cx=192 cy=70 r=7/>
-    <circle cx=192 cy=106 r=7/>
-  </g>
-  <g fill="#059669">
-    <circle cx=286 cy=70 r=8/>
-  </g>
-  {#each [34,70,106] as y}
-    <line x1=42 y1=50 x2=105 y2={y} stroke="#CBD5E1"/>
-    <line x1=42 y1=90 x2=105 y2={y} stroke="#CBD5E1"/>
-    <line x1=119 y1={y} x2=185 y2=34 stroke="#D1D5DB"/>
-    <line x1=119 y1={y} x2=185 y2=70 stroke="#D1D5DB"/>
-    <line x1=119 y1={y} x2=185 y2=106 stroke="#D1D5DB"/>
-  {/each}
-  {#each [34,70,106] as y}
-    <line x1=199 y1={y} x2=278 y2=70 stroke="#D1D5DB"/>
-  {/each}
-  <text x=34 y=18 fontSize=8 textAnchor="middle" fill="#1F2937">Input</text>
-  <text x=112 y=18 fontSize=8 textAnchor="middle" fill="#1F2937">Hidden</text>
-  <text x=192 y=18 fontSize=8 textAnchor="middle" fill="#1F2937">Hidden</text>
-  <text x=286 y=18 fontSize=8 textAnchor="middle" fill="#1F2937">Output</text>
-</svg>
+No external dependencies are required.
 
 ---
 
-# Creating a network
-
-The architecture is defined with a list of integers.
+# Quick Start
 
 ```python
 import pydl
@@ -87,19 +38,53 @@ nn = pydl.Neuronal_network(
     [2, 8, 8, 1],
     pydl.Initialization.he
 )
+
+nn.set_activation(
+    pydl.Activation(
+        pydl.ReLU.forward,
+        pydl.ReLU.derivative
+    )
+)
+
+nn.neurones[-1][0].activation = pydl.Activation(
+    pydl.Tanh.forward,
+    pydl.Tanh.derivative
+)
+
+X = [[0,0],[0,1],[1,0],[1,1]]
+Y = [[0],[1],[1],[0]]
+
+for _ in range(5000):
+    nn.train(X, Y, 0.01)
+
+print(nn.predict([1,0]))
 ```
-
-This creates:
-
-* 2 input values
-* 2 hidden layers with 8 neurons
-* 1 output neuron
 
 ---
 
-# Activation functions
+# Creating a Network
 
-Choose the activation used by every hidden layer.
+A network is defined by its architecture.
+
+```python
+nn = pydl.Neuronal_network(
+    [4, 16, 8, 2],
+    pydl.Initialization.xavier
+)
+```
+
+The list represents:
+
+* **4** input values
+* **16** neurons
+* **8** neurons
+* **2** output neurons
+
+---
+
+# Activation Functions
+
+Apply one activation to every neuron.
 
 ```python
 nn.set_activation(
@@ -110,116 +95,323 @@ nn.set_activation(
 )
 ```
 
-Available activations include:
-
-| Function  | Typical use              |
-| --------- | ------------------------ |
-| Linear    | Regression output        |
-| ReLU      | Hidden layers            |
-| LeakyReLU | Hidden layers            |
-| Sigmoid   | Binary classification    |
-| Tanh      | Values between -1 and 1  |
-| GELU      | Smooth hidden activation |
-| ELU       | Negative saturation      |
-| Softplus  | Positive outputs         |
-
-The output layer can use a different activation:
+The output layer can use another activation.
 
 ```python
 nn.neurones[-1][0].activation = pydl.Activation(
-    pydl.Tanh.forward,
-    pydl.Tanh.derivative
+    pydl.Linear.forward,
+    pydl.Linear.derivative
+)
+```
+
+Available activations:
+
+| Function  | Output                 |
+| --------- | ---------------------- |
+| Linear    | (-∞, +∞)               |
+| ReLU      | [0, +∞)                |
+| LeakyReLU | (-∞, +∞)               |
+| Sigmoid   | (0, 1)                 |
+| Tanh      | (-1, 1)                |
+| ELU       | Smooth negative values |
+| GELU      | Smooth ReLU            |
+| Softplus  | Positive smooth output |
+
+---
+
+# API Reference
+
+## Neuronal_network
+
+### `__init__(neuronal_structure, init)`
+
+Creates a neural network.
+
+```python
+nn = pydl.Neuronal_network(
+    [3, 12, 1],
+    pydl.Initialization.he
+)
+```
+
+| Parameter            | Description                  |
+| -------------------- | ---------------------------- |
+| `neuronal_structure` | List describing each layer   |
+| `init`               | Weight initialization method |
+
+---
+
+### `set_activation(activation)`
+
+Applies the same activation to every neuron.
+
+```python
+nn.set_activation(
+    pydl.Activation(
+        pydl.ReLU.forward,
+        pydl.ReLU.derivative
+    )
 )
 ```
 
 ---
 
-# Training
+## Prediction
 
-Training is performed with backpropagation.
+### `predict(input)`
+
+Returns the network prediction.
 
 ```python
-X = [[0,0], [0,1], [1,0], [1,1]]
-Y = [[0], [1], [1], [0]]
-
-for _ in range(5000):
-    nn.train(X, Y, 0.01)
+result = nn.predict([0.5, 0.1])
 ```
 
-You can also train one sample manually:
+**Returns**
 
 ```python
-nn.back_propagation([1,0], [1], 0.01)
+[0.842]
 ```
 
 ---
 
-# Prediction
+### `forward_pass(input)`
 
-Once trained:
+Returns the output of every layer.
 
 ```python
-prediction = nn.predict([1,0])
-print(prediction)
+layers = nn.forward_pass([1,0])
 ```
 
-The network always returns a list of output values.
+Example output:
+
+```python
+[
+    [1,0],
+    [...],
+    [...],
+    [0.91]
+]
+```
+
+Useful for debugging or visualizing hidden layers.
 
 ---
 
-# Saving and loading
+## Training
 
-Save the learned weights and biases:
+### `train(train_list, result_list, learning_rate)`
+
+Trains the network for one complete epoch.
+
+```python
+nn.train(X, Y, 0.001)
+```
+
+| Parameter       | Description           |
+| --------------- | --------------------- |
+| `train_list`    | Input samples         |
+| `result_list`   | Expected outputs      |
+| `learning_rate` | Gradient descent step |
+
+---
+
+### `back_propagation(input, expected, learning_rate)`
+
+Performs a single learning step.
+
+```python
+nn.back_propagation(
+    [1,0],
+    [1],
+    0.001
+)
+```
+
+This method automatically performs:
+
+1. Forward propagation
+2. Error computation
+3. Gradient propagation
+4. Weight update
+
+---
+
+## Evaluation
+
+### `evaluate(inputs, expected)`
+
+Computes the average absolute error.
+
+```python
+error = nn.evaluate(X, Y)
+```
+
+Example:
+
+```python
+0.0134
+```
+
+---
+
+### `accuracy(dataset, tolerance)`
+
+Computes prediction accuracy within a tolerance.
+
+```python
+acc = nn.accuracy(dataset, 0.05)
+```
+
+Example:
+
+```python
+98.7
+```
+
+---
+
+## Model Management
+
+### `save_json(path)`
+
+Saves every weight and bias.
 
 ```python
 nn.save_json("model.json")
 ```
 
-Reload them later:
+The file contains:
+
+```json
+{
+    "weights": [...],
+    "bias": [...]
+}
+```
+
+---
+
+### `load_json(path)`
+
+Loads a previously trained model.
 
 ```python
 nn.load_json("model.json")
 ```
 
-This makes it possible to train a model once and reuse it instantly.
+---
+
+### `clone()`
+
+Creates a deep copy of the network.
+
+```python
+copy = nn.clone()
+```
+
+Useful for testing hyperparameters without modifying the original model.
 
 ---
 
-# Initialization methods
+### `reset()`
 
-PyDL includes three initialization strategies:
-
-| Method  | Description             |
-| ------- | ----------------------- |
-| Xavier  | Balanced initialization |
-| He      | Recommended for ReLU    |
-| Uniform | Custom random interval  |
-
-Example:
+Reinitializes every weight using the original initialization method.
 
 ```python
-nn = pydl.Neuronal_network(
-    [1,16,16,1],
-    pydl.Initialization.xavier
-)
+nn.reset()
 ```
 
 ---
 
-# Example projects
+## Hyperparameter Tuning
 
-The library can already be used for projects such as:
+### `learning_rate_finder(min_max, training_list, validation_list, number_train, log=False)`
 
-* XOR solver
-* Cosine approximation
-* Tangent approximation
-* Function visualizer with Tkinter
-* Small AI experiments
+Automatically searches for a good learning rate.
+
+```python
+lr = nn.learning_rate_finder(
+    (1e-5, 0.1),
+    train_data,
+    valid_data,
+    6
+)
+```
+
+Returns the best learning rate found.
+
+---
+
+# Weight Initialization
+
+## He Initialization
+
+Recommended with ReLU.
+
+```python
+pydl.Initialization.he
+```
+
+## Xavier Initialization
+
+Balanced initialization for many activation functions.
+
+```python
+pydl.Initialization.xavier
+```
+
+## Uniform Initialization
+
+Custom interval.
+
+```python
+pydl.Initialization.uniform(-1, 1)
+```
+
+---
+
+# Examples
+
+Approximate a cosine function:
+
+```python
+import math
+
+for angle in range(-360, 361):
+    x = [angle / 360]
+    y = [math.cos(math.radians(angle))]
+    nn.back_propagation(x, y, 0.001)
+```
+
+Predict:
+
+```python
+print(nn.predict([45/360]))
+```
+
+---
+
+# Project Structure
+
+```text
+PyDL/
+│
+├── pydl.py
+├── README.md
+├── LICENSE
+├── examples/
+│   ├── xor.py
+│   ├── cosine.py
+│   ├── tangent.py
+│   └── visualizer.py
+└── models/
+    └── model.json
+```
 
 ---
 
 # Philosophy
 
-PyDL is designed for **education**, **experimentation**, and **understanding neural networks from scratch**.
+PyDL is **not designed to compete with TensorFlow or PyTorch**. It is an educational library whose objective is to make neural networks understandable, hackable and easy to extend.
 
-Every algorithm is intentionally kept readable so that you can modify the source code and build your own AI systems.
+Every algorithm is intentionally kept readable so anyone can modify the source code and experiment with artificial intelligence from scratch.
