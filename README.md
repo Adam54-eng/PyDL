@@ -139,7 +139,7 @@ Simply place the library in your project.
 ```text
 project/
 │
-├── neuronal_network.py
+├── pydl.py
 └── main.py
 ```
 
@@ -154,7 +154,7 @@ No installation or package manager is required.
 # Quick Start
 
 ```python
-from neuronal_network import *
+from pydl import *
 
 # Create a neural network
 network = Neuronal_network(
