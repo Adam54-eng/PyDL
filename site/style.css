@@ -1,0 +1,309 @@
+.github-btn{
+    width: 170px;      /* même largeur */
+    height: 48px;  
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    background: #000000;
+    color: white;
+    text-decoration: none;
+
+    padding: 17px 17px;
+    border-radius: 14px;
+
+    font-family: Arial, sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+    transition: 0.25s ease;
+}
+
+.github-btn:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 14px 28px rgba(37, 99, 235, 0.45);
+    background: #1D4ED8;
+}
+
+.github-btn img,
+.github-btn i{
+    width: 17px;
+    height: 17px;
+    font-size: 20px;
+    border-radius: 50%;
+}
+
+a{
+    text-decoration: none;
+}
+
+.hero-image{
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html{
+    scroll-behavior: smooth;
+}
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background: #ffffff;
+    color: #111827;
+    line-height: 1.6;
+}
+
+/* ===========================
+   Hero
+=========================== */
+
+h1{
+    font-size: 64px;
+    text-align: center;
+    margin-top: 60px;
+    font-weight: 800;
+}
+
+h2{
+    text-align: center;
+    font-size: 34px;
+    margin-top: 20px;
+    font-weight: 700;
+}
+
+body > p{
+    text-align: center;
+    max-width: 750px;
+    margin: 20px auto;
+    color: #6B7280;
+    font-size: 18px;
+}
+
+/* ===========================
+   Buttons
+=========================== */
+
+a{
+    text-decoration: none;
+}
+
+body > a{
+    display: inline-block;
+    margin: 8px;
+}
+
+body{
+    text-align: center;
+}
+
+.github-btn{
+    width: 170px;
+    height: 50px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    background: #111827;
+    color: white;
+
+    border: none;
+    border-radius: 14px;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: .25s ease;
+
+    box-shadow: 0 10px 25px rgba(0,0,0,.15);
+}
+
+.github-btn:hover{
+    background: #2563EB;
+    transform: translateY(-4px);
+    box-shadow: 0 18px 35px rgba(37,99,235,.35);
+}
+
+.github-btn img,
+.github-btn i{
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+}
+
+/* ===========================
+   Hero Image
+=========================== */
+
+.hero-image{
+    width: 100%;
+    height: 570px;
+    object-fit: cover;
+    display: block;
+    margin-top: 40px;
+}
+
+.build-image{
+    width: 330px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* ===========================
+   Dividers
+=========================== */
+
+hr{
+    border: none;
+    height: 1px;
+    background: #E5E7EB;
+    margin: 40px 0;
+}
+
+/* ===========================
+   Features Section
+=========================== */
+
+#features{
+    max-width: 1150px;
+    margin: auto;
+    padding: 20px;
+    text-align: left;
+}
+
+#features h2{
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#features > p{
+    text-align: center;
+    color: #6B7280;
+    max-width: 820px;
+    margin: auto;
+    margin-bottom: 40px;
+    font-size: 17px;
+}
+
+/* ===========================
+   Feature Cards
+=========================== */
+
+table{
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 24px;
+}
+
+th{
+    width: 50%;
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 18px;
+    padding: 35px 25px;
+    text-align: center;
+    vertical-align: top;
+    transition: .25s ease;
+}
+
+th:hover{
+    transform: translateY(-6px);
+    box-shadow: 0 14px 28px rgba(0,0,0,.08);
+    border-color: #2563EB;
+}
+
+th i{
+    font-size: 42px;
+    color: #2563EB;
+    margin-bottom: 15px;
+}
+
+th h3{
+    font-size: 22px;
+    margin-bottom: 10px;
+    color: #111827;
+}
+
+th p{
+    color: #6B7280;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* ===========================
+   Last Title
+=========================== */
+
+#features hr{
+    margin: 60px 0;
+}
+
+#features h2:last-child{
+    margin-top: 10px;
+}
+
+/* ===========================
+   Responsive
+=========================== */
+
+@media (max-width: 768px){
+
+    h1{
+        font-size: 46px;
+    }
+
+    h2{
+        font-size: 28px;
+    }
+
+    body > p{
+        font-size: 16px;
+        padding: 0 20px;
+    }
+
+    .hero-image{
+        height: 260px;
+    }
+
+    table,
+    tr,
+    th{
+        display: block;
+        width: 100%;
+    }
+
+    table{
+        border-spacing: 0;
+    }
+
+    th{
+        margin-bottom: 20px;
+    }
+
+    .github-btn{
+        width: 160px;
+    }
+}
+
+.build-table{
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 20px;
+}
+
+.build-table th{
+    width: 33.33%;    /* même hauteur pour les 3 cartes */
+    vertical-align: top;
+}
